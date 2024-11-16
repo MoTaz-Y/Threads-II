@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -5,6 +6,7 @@ import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidbar from "@/components/shared/RightSidbar";
 import Bottombar from "@/components/shared/Bottombar";
+import { dark } from "@clerk/themes";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -31,7 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} bg-dark-1`}
