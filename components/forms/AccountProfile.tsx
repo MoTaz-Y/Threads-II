@@ -20,7 +20,10 @@ import Profile from "../../public/assets/profile.svg";
 import { Textarea } from "../ui/textarea";
 import { useState, useEffect, ChangeEvent } from "react";
 import { isBase64Image } from "@/lib/utils";
-import { uploadFiles, useUploadThing } from "@/lib/uploadthing";
+import { useUploadThing } from "@/lib/uploadthing";
+import { fetchUser, updateUser } from "@/lib/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 interface Props {
   user: {
     id: string;
@@ -36,6 +39,8 @@ interface Props {
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
+  const pathname = usePathname();
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -48,16 +53,36 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log(values);
     const blob = values.profile_photo;
     const hasImageChanged = isBase64Image(blob);
     if (hasImageChanged) {
+      debugger;
       const imgRes = await startUpload(files);
+      console.log(imgRes);
 
       if (imgRes && imgRes[0].fileUrl) {
         values.profile_photo = imgRes[0].fileUrl;
       }
     }
     // here we can call the backend function to update the user profile
+
+    await updateUser({
+      userId: user.id,
+      name: values.name,
+      username: values.username,
+      image: values.profile_photo,
+      bio: values.bio,
+      path: pathname,
+    });
+    const userNow = await fetchUser(user.id);
+    console.log("user now", userNow);
+
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
 
     console.log(values);
     console.log("hi there");
@@ -122,6 +147,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -133,14 +159,15 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               <FormLabel className="text-base-semibold text-light-2">
                 Name
               </FormLabel>
-              <FormControl className="flex-1 text-base-bold text-gray-600">
+              <FormControl>
                 <Input
                   type="text"
                   placeholder="Full Name"
-                  className="account_form_input no-focus"
+                  className="account-form_input no-focus"
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -152,14 +179,15 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               <FormLabel className="text-base-semibold text-light-2">
                 User Name
               </FormLabel>
-              <FormControl className="flex-1 text-base-semibold text-gray-200">
+              <FormControl>
                 <Input
                   type="text"
                   placeholder="User Name"
-                  className="account_form_input no-focus"
+                  className="account-form_input no-focus"
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -171,14 +199,15 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               <FormLabel className="text-base-semibold text-light-2">
                 Bio
               </FormLabel>
-              <FormControl className="flex-1 text-base-semibold text-gray-200">
+              <FormControl>
                 <Textarea
                   rows={10}
                   placeholder="Your Bio"
-                  className="account_form_input no-focus"
+                  className="account-form_input no-focus"
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
