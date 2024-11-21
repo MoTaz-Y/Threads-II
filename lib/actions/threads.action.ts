@@ -73,7 +73,7 @@ export async function fetchthread(id: string) {
             path: "author",
             model: User,
             select: "_id name parentId image",
-          }, 
+          },
           {
             path: "children",
             model: Thread,
@@ -130,8 +130,12 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   }
 }
 
-
-export async function addCommentToThread(threadId: string, userId: string, commentText: string, path: string) {
+export async function addCommentToThread(
+  threadId: string,
+  userId: string,
+  commentText: string,
+  path: string
+) {
   try {
     connectToDB();
     //find the original thread by its own id
@@ -158,4 +162,24 @@ export async function addCommentToThread(threadId: string, userId: string, comme
   } catch (error: any) {
     throw new Error(`Failed to add comment to thread: ${error.message}`);
   }
-} 
+}
+
+export async function fetchUserPosts(userId: string) {
+  try {
+    connectToDB();
+    // fetch the user's posts
+    // to do populate community
+    const threads = await Thread.find({ author: userId }).populate({
+      path: "author",
+      model: Thread,
+      populate: {
+        path: "author",
+        model: Thread,
+        select: "_id name id image",
+      },
+    });
+    return threads;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user's posts: ${error.message}`);
+  }
+}
