@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-      <img src="https://github.com/adrianhajdin/threads/assets/151519281/a9cd1088-968b-4b1d-b21a-f5f97d0c202b" alt="Project Banner">
+      <img src="https://d3i6fh83elv35t.cloudfront.net/static/2023/07/2023-07-06T140321Z_435353126_RC2PX1A3JBM9_RTRMADP_3_META-THREADS-1024x620.jpg" alt="Project Banner">
 
   <br />
 
