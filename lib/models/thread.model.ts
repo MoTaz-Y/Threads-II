@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
-const ThreadSchema = new mongoose.Schema({
+const threadSchema = new mongoose.Schema({
   text: {
     type: String,
     required: true,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    ref: "User",
     required: true,
   },
   community: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Community", // Reference to the Community model
+    ref: "Community",
   },
   createdAt: {
     type: Date,
@@ -24,11 +24,11 @@ const ThreadSchema = new mongoose.Schema({
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Thread", // Reference to the Thread model itself
+      ref: "Thread",
     },
   ],
 });
 
-const Thread = mongoose.models.Thread || mongoose.model("Thread", ThreadSchema);
+const Thread = mongoose.models.Thread || mongoose.model("Thread", threadSchema);
 
 export default Thread;
